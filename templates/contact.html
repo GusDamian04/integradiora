@@ -1,0 +1,78 @@
+{% extends './base.html' %}
+
+{% block title %}Contacto{% endblock %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+{% block customCSS %}
+<style>
+    body {
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color:whitesmoke;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        color: #fff;
+        font-size: 36px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .contact-info {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    .contact-info p {
+        font-size: 18px;
+        color: #000; /* Cambiar el color del texto a negro */
+        margin-bottom: 10px;
+    }
+
+    footer {
+        background-color:mintcream;
+        padding: 20px;
+        text-align: center;
+        margin-top: 77px;
+    }
+
+    footer p {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<main class="container">
+    <div class="header">
+        <h1></h1>
+    </div>
+    <p></p>
+    <br>
+    <center><h1>Contáctanos</h1></center>
+    <div class="contact-info">
+        <h3>Formas de contacto</h3>
+        <br>
+        <p>Manda tus trabajos para imprimirlos:</p>
+        <br>
+        <p>
+            <p>Correo electrónico: <a href="mailto: maydm2103@gmail.com">maydm2103@gmail.com</a></p>
+        </p>
+        <br>
+        <br>
+        <p>Teléfono: 
+            <p><a href="tel:2474751077">2474751077</a></p>
+        </p>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,302 @@
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_mysqldb import MySQL
+from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
+from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Blueprint
+
+from config import config
+
+# from config import DevelopmentConfig
+# Models:
+from models.ModelUser import ModelUser
+
+# Entities:
+from models.entities.User import User
+
+app = Flask(__name__)
+
+# db_config = {
+#     'host': config.MYSQL_HOST,
+#     'user': config.MYSQL_USER,
+#     'password': config.MYSQL_PASSWORD,
+#     'database': config.MYSQL_DB,
+# }
+
+auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
+admin_blueprint = Blueprint('admin', __name__, url_prefix='/admin')
+products_blueprint = Blueprint('products', __name__, url_prefix='/products')
+
+csrf = CSRFProtect()
+db = MySQL(app)
+login_manager_app = LoginManager(app)
+
+
+@login_manager_app.user_loader
+def load_user(id):
+    return ModelUser.get_by_id(db, id)
+
+@app.route('/')
+def index():
+    return render_template('auth/home.html')
+
+@auth_blueprint.route('/home')
+def home():
+    return render_template('auth/home.html')
+
+@auth_blueprint.route('/catalogue')
+def catalogue():
+    return render_template('auth/catalogue.html')
+
+@auth_blueprint.route('/contact')
+def contact():
+    return render_template('auth/contact.html')
+
+@auth_blueprint.route('/login')
+def login():
+    return render_template('auth/login.html')
+
+@admin_blueprint.route('/homeadmin', endpoint='home_admin')
+def admin():
+    return render_template('admin/admin.html')
+
+@admin_blueprint.route('/catalogueadmin', endpoint='catalogue_admin')
+def cataloge():
+    return render_template('admin/catalogue.html')
+
+@products_blueprint.route('/addproduct', endpoint='addproduct_products')
+def addproduct():
+    return render_template('products/addproduct.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # print(request.form['username'])
+        # print(request.form['password'])
+        user = User(0, request.form['username'], request.form['password'])
+        logged_user = ModelUser.login(db, user)
+        if logged_user != None:
+            if logged_user.password:
+                login_user(logged_user)
+                if logged_user.roll == 'adm':
+                    return render_template('admin/admin.html')
+                elif logged_user.roll == 'emp':
+                    return render_template('employee/employee.html')
+                else:
+                    flash("Unknown role...")
+                    return render_template('auth/login.html')
+            else:
+                flash("Contrasña incorrecta...")
+                return render_template('auth/login.html')
+        else:
+            flash("Usuario no encontrado...")
+            return render_template('auth/login.html')
+    else:
+        return render_template('auth/login.html')
+
+@app.route('/products/addproduct', methods=['GET', 'POST'])
+@csrf.protect()  # Usamos csrf.protect() para validar el token CSRF
+def add_product():
+    if request.method == 'POST':
+        # Procesar el formulario y agregar el producto
+        name = request.form['name']
+        price = request.form['price']
+        category = request.form['category']
+        brand = request.form['brand']
+        add_product(name, price, category, brand)  # Llamamos a la función add_product desde el módulo products.py
+        return redirect('/products/addproduct')  # Redireccionamos a la página de agregar productos nuevamente
+    else:
+        return render_template('products/addproduct.html')
+
+def status_401(error):
+    print(error)
+    return redirect(url_for('login'))
+
+
+def status_404(error):
+    return "<h1>Página no encontrada</h1>", 404
+
+
+if __name__ == '__main__':
+    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(admin_blueprint)
+    app.register_blueprint(products_blueprint)
+    app.config.from_object(config['development'])
+    csrf.init_app(app)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
+    app.run()
+
+-------------------------------------------------------------------------------------------------------------
+<form method="POST" action="/add_product">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" name="name" placeholder="Enter product name">
+    </div>
+    <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="text" class="form-control" name="price" placeholder="Enter product price">
+    </div>
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <input type="text" class="form-control" name="category" placeholder="Enter product category">
+    </div>
+    <div class="form-group">
+        <label for="brand">Brand:</label>
+        <input type="text" class="form-control" name="brand" placeholder="Enter product brand">
+    </div>
+    <input type="submit" value="Add Product"> <!-- Corrección: Cambia el valor del botón a "Add Product" -->
+</form>
+-------------------------------------------------------------------------------------------------------------
+{% extends 'baseadm.html' %}
+
+{% block title %}Home{% endblock %}
+
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+{% block customCSS %}
+{% endblock %}
+
+{% block body %}
+<h1>Productos</h1>
+<table border="1">
+    <tr>
+        <th>ID de Producto</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Categoria</th>
+        <th>Marca</th>
+        <th>Editar</th>
+        <th>Eliminar</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product['id_product'] }}</td>
+        <td>{{ product['name'] }}</td>
+        <td>{{ product['price'] }}</td>
+        <td>{{ product['category'] }}</td>
+        <td>{{ product['brand'] }}</td>
+        <td><a href="/editar_producto/{{ product['id_product'] }}">Editar</a></td>
+        <td><a href="/eliminar_producto/{{ product['id_product'] }}">Eliminar</a></td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="/nuevo_usuario">Agregar Nuevo Usuario</a>
+<form action="/logout" method="post">
+    <input type="submit" value="Salir">
+</form>
+{% endblock %}
+-------------------------------------------------------------------------------------------------------------
+    <form action="/admin" method="get" class="logout-form">
+        <input type="submit" value="Inicio" class="btn btn-secondary">
+    </form>
+-------------------------------------------------------------------------------------------------------------
+app.py
+@app.route('/update_product/<int:id_product>', methods=['POST'])
+def process_update_product(id_product):
+    result = update_products(id_product)
+    if result:
+        return render_template('admin.html')
+    else:
+        return render_template('error.html')
+
+@app.route('/update_product/<int:id_product>')
+def update_product(id_product):
+    product_details = get_product_by_id(id_product)
+    print(product_details)
+    return render_template('update_product.html', product=product_details)
+
+-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+def get_product_by_id(id_product):
+    conector = conector_db()
+    cursor = conector.cursor()
+
+    consult = "SELECT * FROM products WHERE id_product = %s"
+    cursor.execute(consult, (id_product,))
+    product = cursor.fetchone()
+
+    cursor.close()
+    conector.close()
+
+    return product
+
+def update_products(id_product):
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+        category = request.form['category']
+        brand = request.form['brand']
+
+        conector = conector_db()
+        cursor = conector.cursor()
+        consulta = "UPDATE products SET name = %s, price = %s, category = %s, brand = %s WHERE id_product = %s"
+        cursor.execute(consulta, (name, price, category, brand, id_product))
+        conector.commit()
+        cursor.close()
+        conector.close()
+
+        return True
+
+    return False
+-------------------------------------------------------------------------------------------------------------
+SELECT sale.ticket, user.username, products.name, sale.amount, sale.total, sale.date FROM sale 
+INNER JOIN user ON user.id = sale.id_user INNER JOIN products ON products.id_product = sale.id_product,
+-------------------------------------------------------------------------------------------------------------
+SELECT sale.ticket, user.username, products.name, sale.amount, sale.total, sale.date FROM sale 
+INNER JOIN user ON user.id = sale.id_user INNER JOIN products ON products.id_product = sale.id_product 
+WHERE date = '28/07/2023';
+-------------------------------------------------------------------------------------------------------------
+SELECT SUM(total) FROM sale WHERE date = '28/07/2023';
+-------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------

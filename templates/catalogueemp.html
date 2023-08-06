@@ -1,0 +1,168 @@
+{% extends 'baseemp.html' %}
+
+{% block title %}Catalogo{% endblock %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+{% block customCSS %}
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color:whitesmoke;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .product-card {
+        margin-bottom: 20px;
+    }
+
+    .product-card img {
+        width: 100%;
+        height: auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<main class="container">
+    <h1>Catálogo de Productos</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/lapicero.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Lapiceros</h5>
+                    <p class="card-text">Lapiceros de colores.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/lapiz.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Lapiz</h5>
+                    <p class="card-text">Lapiz normal y de dibujo.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/sacapunta.png') }}" width="200px" height="200px" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Sacapuntas</h5>
+                    <p class="card-text">Sacapuntas chico y grande.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/goma.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Gomas</h5>
+                    <p class="card-text">Gomas de migajon, blanca.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/marcatextos.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Marcatextos</h5>
+                    <p class="card-text">Marcatextos de colores.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/plumon.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Plumones</h5>
+                    <p class="card-text">De pizarron y premanente.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/pinturas.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Pinturas</h5>
+                    <p class="card-text">Punturas de marcas.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/acuarelas.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Acuarelas</h5>
+                    <p class="card-text">Acuarelas de marcas.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/gis.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Gises</h5>
+                    <p class="card-text">Gises blancos y de colores.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/crayones.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Crayones</h5>
+                    <p class="card-text">Crayones de marcas.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/papellustre.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Papel</h5>
+                    <p class="card-text">Papel decorativo, crepe etc.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card product-card">
+                <img src="{{ url_for('static', filename='img/libreta.png') }}" alt="Articulos Basicos">
+                <div class="card-body">
+                    <h5 class="card-title">Libretas</h5>
+                    <p class="card-text">Rayada, Cuadros, Dibujo.</p>
+                    <a href="#" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

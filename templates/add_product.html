@@ -1,0 +1,84 @@
+{% extends './baseadm.html' %}
+
+{% block title %}Agregar Producto{% endblock %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/css/login.css">
+{% block customCSS %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        color: #000;
+        font-size: 36px;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 400px; /* Ajusta el ancho del formulario según tus necesidades */
+        margin: auto; /* Centra el formulario dentro de su contenedor */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Agrega sombra al formulario */
+    }
+
+    .form-container .form-group label {
+        font-weight: bold;
+    }
+
+    footer {
+        background-color: mintcream;
+        padding: 0px;
+        text-align: center;
+        margin-top: 5px;
+    }
+</style>
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <div class="header">
+        <h1>Agregar Producto</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" action="/add_product">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="name">Nombre:</label>
+                <input type="text" class="form-control" name="name" placeholder="Enter product name">
+            </div>
+            <div class="form-group">
+                <label for="price">Precio:</label>
+                <input type="text" class="form-control" name="price" placeholder="Enter product price">
+            </div>
+            <div class="form-group">
+                <label for="stock">Existencias:</label>
+                <input type="text" class="form-control" name="stock" placeholder="Enter product price">
+            </div>
+            <div class="form-group">
+                <label for="category">Categoria:</label>
+                <input type="text" class="form-control" name="category" placeholder="Enter product category">
+            </div>
+            <div class="form-group">
+                <label for="brand">Marca:</label>
+                <input type="text" class="form-control" name="brand" placeholder="Enter product brand">
+            </div>
+            
+            <input type="submit" class="btn btn-primary" value="Agregar Product">
+        </form>
+    </div>
+{% endblock %}
